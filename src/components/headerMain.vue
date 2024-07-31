@@ -4,7 +4,7 @@
 			<div class="container">
 				<nav class="nav">
 					<a class="logo">
-						<img src="../assets/employee_care_wellbeing_selection_hire-64.webp" alt="логотип сайта" class="logo-img">
+						<img src="../assets/OMCah4J9tszZbXoGfnft5-transformed.webp" alt="логотип сайта" class="logo-img">
 					</a>
 
 					<router-link to="/" style="margin-top: -76px; color: #2c3e50;">
@@ -15,38 +15,90 @@
 							<router-link to='/' class="menu-link">Главная</router-link>
 						</li>
 						<li class="menu-item">
-							<router-link to='/talent' class="menu-link">Найти Талант </router-link>
+							<a @click="gotoFindT" class="menu-link">Найти Талант </a>
 						</li>
 						<li class="menu-item">
-							<router-link to='/blog' class="menu-link">HR-Блог </router-link>
+							<a @click="gotoHrB" class="menu-link">HR-Блог </a>
 						</li>
 						<li class="menu-item">
-							<router-link to='/analysis' class="menu-link">Аналитика </router-link>
+							<a @click="gotoAnalytics" class="menu-link">Аналитика </a>
 						</li>
 						<li class="menu-item">
-							<button class="button-view" @click="gotoRegister">Регистрация</button>
-						</li>
-						<li class="menu-item">
-							<button class="join-button" @click="gotoLogin">Войти</button>
+							<!-- Условный рендеринг для показа кнопки входа/выхода -->
+							<button v-if="!$store.state.isAuthenticated" class="button-view" style="margin-right: 30px;"
+								@click="gotoRegister">Регистрация</button>
+							<button v-if="!$store.state.isAuthenticated" class="join-button" @click="gotoLogin">Войти</button>
+							<div v-else>
+								<button class="button-view" @click="logout">Выход</button>
+								<button class="button-view" style="margin-left: 30px;" @click="gotoProfile">Профиль</button>
+							</div>
 						</li>
 					</ul>
 				</nav>
 			</div>
 		</div>
 	</header>
-
 </template>
-
 <script>
 
 
 export default {
+	data() {
+		return {
+			role: ''
+		}
+	},
 	methods: {
 		gotoLogin() {
 			this.$router.push('/login')
 		},
 		gotoRegister() {
 			this.$router.push('/register')
+		},
+		gotoProfile() {
+			const role = this.$store.state.userRole;
+			if (role === 'applicant') {
+				this.$router.push('/profileapplicant');
+			} else if (role === 'company') {
+				this.$router.push('/profilecompany');
+			} else {
+				console.error('Ошибка при входе: неизвестная роль');
+			}
+
+		}, gotoFindT() {
+			const role = this.$store.state.userRole;
+			if (role === 'company') {
+				this.$router.push('/talent');
+			} else {
+				alert("Ввойдите как компания")
+			}
+		}, gotoHrB() {
+			const role = this.$store.state.userRole;
+			if (role === 'applicant') {
+				this.$router.push('/blog');
+			} else {
+				alert("Ввойдите как соискатель")
+			}
+		},
+		gotoAnalytics() {
+			const role = this.$store.state.userRole;
+			if (role === 'company') {
+				this.$router.push('/analysis');
+			} else {
+				alert("Ввойдите как компания")
+			}
+		},
+
+		logout() {
+			// Реализация выхода из системы (например, очистка токена)
+			// После этого перенаправляем на страницу входа
+			this.$router.push('/login');
+			// Устанавливаем флаг isAuthenticated в false
+			this.$store.commit('setIsAuthenticated', false);
+			localStorage.setItem('isAuthenticated', false);
+			this.$store.commit('resetUser');
+			localStorage.removeItem('userRole');
+			localStorage.removeItem('login');
 		}
 	}
 
@@ -84,7 +136,7 @@ export default {
 	background-color: rgb(255, 255, 255);
 	padding: 15px 0 14px;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	;
+
 }
 
 .container {
@@ -138,6 +190,51 @@ ul {
 	font-family:
 		Inika, 'Source Sans Pro';
 	text-decoration: none;
+}
+
+@media (max-width: 590px) {
+	.menu-link {
+		font-size: 8px;
+	}
+}
+
+@media(max-width: 590px) {
+	.menu-item {
+		padding-right: 6px;
+	}
+}
+
+@media(max-width:590px) {
+	.h2 {
+		font-size: 16px;
+		padding-top: 5px;
+	}
+}
+
+@media (max-width: 850px) {
+	.menu-link {
+		font-size: 12px;
+	}
+}
+
+@media(max-width: 850px) {
+	.menu-item {
+		padding-right: 10px;
+	}
+}
+
+@media(max-width:850px) {
+	.h2 {
+		font-size: 20px;
+		padding-top: 5px;
+	}
+}
+
+@media(max-width: 850px) {
+	.logo-img {
+		width: 50px;
+		height: 50px;
+	}
 }
 
 .button-view {

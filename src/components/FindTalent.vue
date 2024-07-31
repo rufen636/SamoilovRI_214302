@@ -1,94 +1,86 @@
-<!-- eslint-disable vue/require-v-for-key -->
 <template>
 	<header-main />
 	<p style="margin-top: 200px;"></p>
-	<div class="container " id="app">
-		<div class="card ">
-			<!-- <h1>{{ title }}: {{ counter }}</h1>
-			<div>
-				<button class="btn primary " v-on:click="counter++">Добавить</button>
-				<button class="btn danger" v-on:click="counter--">Вычесть</button>
-			</div> -->
+	<div class="container" id="app">
+		<div class="card">
 			<h1>{{ title }}</h1>
 			<div class="container2">
 				<h3>Фильтрация по опыту работы:</h3>
-				<h4 class="text-checkbox">1 год</h4>
-				<input type="checkbox">
-			</div>
-			<div class="container2">
-				<h4 class="text-checkbox">2 года</h4>
-				<input type="checkbox">
-			</div>
-			<div class="co">
-				<h4 class="text-checkbox">Больше 3 лет</h4>
-				<input type="checkbox">
+				<div>
+					<h4 class="text-checkbox">1 год</h4>
+					<input type="checkbox" v-model="experienceFilters" value="1" @change="findCandidates" />
+				</div>
+				<div>
+					<h4 class="text-checkbox">2 года</h4>
+					<input type="checkbox" v-model="experienceFilters" value="2" @change="findCandidates" />
+				</div>
+				<div>
+					<h4 class="text-checkbox">Больше 3 лет</h4>
+					<input type="checkbox" v-model="experienceFilters" value="4" @change="findCandidates" />
+				</div>
 			</div>
 			<p></p>
 			<div class="form-control">
-				<input type="search" :placeholder="placeholderString" :value="inputValue" @input="inputChangeHandler"
-					@keypress.enter="addNewNotes" />
+				<input type="search" :placeholder="placeholderString" v-model="inputValue" @input="findCandidates" />
 			</div>
-			<button class="btn" @click="addNewNotes">Найти </button>
 			<hr />
-			<ul class="list" v-if="notes.length !== 0">
-				<!--//eslint-disable-next-line vue/require-v-for-key-->
-				<li class="list-item" v-for="(myNote, index ) in notes">
-					({{ index + 1 }}){{ toUpperCase(myNote) }}
-					<button class="btn danger" @click="deleteNote(index)">Удалить</button>
+			<ul class="list" v-if="showResults">
+				<li class="list-item" v-for="(candidate, index) in candidates" :key="index">
+					<h3>({{ index + 1 }}) {{ candidate.first_name }}</h3>
+					<p><strong>Опыт:</strong> {{ candidate.experience }} лет</p>
+					<p><strong>Навыки:</strong> {{ candidate.skills }}</p>
+					<p><strong>Деятельность:</strong> {{ candidate.field_of_work }}</p>
 				</li>
 			</ul>
 			<div v-else>Ничего не найдено</div>
 		</div>
-
 	</div>
 </template>
 
 <script>
-import headerMain from '../components/headerMain.vue'
+import headerMain from '../components/headerMain.vue';
+import axios from 'axios';
+
 export default {
-	name: 'userCard',//св-во name для откладки
+	name: 'userCard',
 	data() {
 		return {
 			title: "Найдите подходящего кандидата",
 			placeholderString: "Поиск",
 			inputValue: '',
-			addedValue: '',
-			notes: []
+			experienceFilters: [],
+			candidates: []
+		};
+	},
+	computed: {
+		showResults() {
+			return this.inputValue.trim() !== '' || this.experienceFilters.length > 0;
 		}
 	},
-	methods: {// без кэширования
-		inputChangeHandler(event) {
-			console.log("Метод сработал корректно", event.target.value)
-			this.inputValue = event.target.value
-		},
-		addInputValue() {
-			this.addedValue = this.inputValue
-		}, toUpperCase(item) {
-			return item.toUpperCase()
-		},
-		addNewNotes() {
-			if (this.inputValue === '') {
-				alert("Заполните поле")
+	methods: {
+		async findCandidates() {
+			if (this.showResults) {
+				try {
+					const response = await axios.post('http://localhost:3000/api/findCandidates', {
+						query: this.inputValue,
+						experienceFilters: this.experienceFilters
+					});
+					this.candidates = response.data;
+				} catch (error) {
+					console.error('Ошибка при поиске кандидатов:', error);
+					alert('Произошла ошибка при поиске кандидатов');
+				}
 			} else {
-				this.notes.push(this.inputValue)
+				this.candidates = [];
 			}
-		}, deleteNote(index) {
-			this.notes.splice(index, 1)
 		}
-
-	},
-	computed: {//кэширование и  аргумент передать нельзя
-
-	},
-	watch: {//следят за изменением свойств(называются как и св-ва за которыми буде следить)
-
-
 	},
 	components: {
 		headerMain
-	},
-}
+	}
+};
 </script>
+
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -494,3 +486,4 @@ h3 {
 	border-bottom: 2px solid #2c3e50;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

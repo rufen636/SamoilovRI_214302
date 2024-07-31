@@ -31,3 +31,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped></style>
+./Registration.vue./Registration.vue./Registration.vue./Registration.vue./Registration.vue./Registration.vue./Registration.vue./Registration.vue./Registration.vue

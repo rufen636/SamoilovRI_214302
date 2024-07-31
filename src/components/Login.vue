@@ -6,37 +6,55 @@
 		<h2 class="text-auth">Введите пароль</h2>
 		<input v-model="password" class="btm" type="password" placeholder="Пароль..." />
 
-		<input @click="loginUser" class="btn" type="button" value="Далее">
+		<input @click="onLogin" class="btn" type="button" value="Далее">
 	</div>
 </template>
 
 <script>
 import headerMain from '../components/headerMain.vue';
 import axios from 'axios'; // Импорт библиотеки axios
+
 export default {
-	name: 'userCard',
+	name: 'LoginForm',
 	data() {
 		return {
 			login: '',
 			password: '',
-			role: ''
+			role: '',
+
 		};
 	},
 	methods: {
 		async onLogin() {
-			if (!this.validate()) return false
+			const { login, password } = this;
+			try {
+				const response = await axios.post('http://localhost:3000/api/login', { login, password });
 
-			const { login, password } = this
-			this.reset()
-			const response = await axios.post('/api/login', { login, password })
-			const role = response.data.role // Предположим, что роль приходит в ответе от сервера
+				if (response.status === 200) {
+					const role = response.data.role;
+					this.$store.commit('setIsAuthenticated', true);
+					this.$store.commit('setUserRole', role);
+					localStorage.setItem('isAuthenticated', true);
+					localStorage.setItem('userRole', role);
+					this.$store.commit('setLogin', login);
+					localStorage.setItem('login', login);
 
-			if (role === 'applicant') {
-				this.$router.push('/applicant')
-			} else if (role === 'company') {
-				this.$router.push('/company')
+					if (role === 'applicant') {
+						this.$router.push('/applicant');
+					} else if (role === 'company') {
+						this.$router.push('/company');
+					} else {
+						console.error('Ошибка при входе: неизвестная роль');
+					}
+				} else {
+					console.error('Ошибка при входе: неверный статус ответа');
+					alert('Произошла ошибка при аутентификации');
+				}
+			} catch (error) {
+				console.error('Ошибка при входе:', error);
+				alert('Неверный логин или пароль');
 			}
-		}
+		},
 
 	},
 	components: {
@@ -44,6 +62,7 @@ export default {
 	},
 };
 </script>
+
 <style lang="scss" scoped>
 .container {
 	border: solid 3px #834C0B;
@@ -97,3 +116,4 @@ export default {
 	background: #2c3e50;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

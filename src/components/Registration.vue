@@ -18,12 +18,13 @@
 			<input type="checkbox" v-model="selectedRoles.applicant">
 		</div>
 
-		<input class="btn" type="button" value="Далее" @click="submitForm">
+		<input class="btn" type="button" value="Далее" @click="submitForm" :disabled="!canCreate">
 	</div>
 </template>
 
 <script>
 import headerMain from '../components/headerMain.vue';
+import axios from 'axios';
 
 export default {
 	name: 'userCard',
@@ -36,18 +37,54 @@ export default {
 		};
 	},
 	computed: {
-		role() {
-			return Object.keys(this.selectedRoles).filter(role => this.selectedRoles[role]).join(',');
-		},
+		canCreate() {
+			return this.login.trim() && this.password.trim() && this.confirmPassword.trim();
+		}
 	},
 	methods: {
+		validate() {
+			if (this.login.length < 4) {
+				alert('Логин должен содержать не менее 4 символов');
+				return false;
+			}
+			if (this.password.length < 7) {
+				alert('Пароль должен содержать не менее 7 символов');
+				return false;
+			}
+			if (this.password !== this.confirmPassword) {
+				alert('Пароли не совпадают');
+				return false;
+			}
+			return true;
+		},
+		async submitForm() {
+			if (!this.validate()) return;
 
+			try {
+				const selectedRoles = Object.keys(this.selectedRoles).filter(role => this.selectedRoles[role]);
+				const response = await axios.post('http://localhost:3000/api/register', {
+					login: this.login,
+					password: this.password,
+					roles: selectedRoles
+				});
+
+				if (response.status === 201) {
+					console.log('User successfully created');
+					this.$router.push('/login');
+				} else {
+					console.error('Failed to create user');
+				}
+			} catch (error) {
+				console.error('Error creating user:', error);
+			}
+		}
 	},
 	components: {
 		headerMain,
 	},
 };
 </script>
+
 <style lang="scss" scoped>
 .container {
 	border: solid 3px #834C0B;
@@ -116,3 +153,4 @@ export default {
 	display: flex;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

@@ -2,6 +2,7 @@
 
 	<body style="height: 800px;width:1440px">
 		<header-main />
+
 		<p style="padding-top: 150px;"></p>
 		<p style="color: #834C0B;padding-left: 30px;"> Связь </p>
 		<div class="bigcontainer">
@@ -40,7 +41,6 @@
 <script>
 import headerMain from '../components/headerMain.vue'
 export default {
-	name: 'userCard',//св-во name для откладки
 	data() {
 		return {
 
@@ -262,3 +262,4 @@ p {
 	margin-left: 200px;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

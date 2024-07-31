@@ -47,7 +47,7 @@
 			<div class="info-block2">
 				<ul class="info-func">
 					<li>
-						<img class="logo-func1" src="../assets/16-1User_7-3-512.webp">
+						
 					</li>
 					<li style="padding-left: 10px;padding-top: 6px;">
 						Умный Фильтр
@@ -125,7 +125,7 @@
 
 		<footer class="footer">
 			<img class="facebook" src="../assets/BW_Facebook_glyph_svg-64.webp">
-			<img class="instagramm" src="../assets/38-instagram-2-64.webp">
+			
 			<pre style="padding-left: 1350px;">Больше</pre>
 		</footer>
 	</body>
@@ -137,7 +137,6 @@ export default {
 	name: 'userCard',//св-во name для откладки
 	data() {
 		return {
-			text: "sgsdg",
 			isCatVisible: true,
 			imgFilters: {
 				sepia: false,
@@ -152,7 +151,20 @@ export default {
 			this.$router.push('/contact')
 		},
 		gotoJoin() {
-			this.$router.push('/join')
+			const isAuthenticated = this.$store.state.isAuthenticated;
+			if (!isAuthenticated) {
+				this.$router.push('/join');
+			} else {
+				const role = this.$store.state.userRole;
+				if (role === 'applicant') {
+					this.$router.push('/applicant');
+				} else if (role === 'company') {
+					this.$router.push('/company');
+				} else {
+					console.error('Ошибка при входе: неизвестная роль');
+				}
+			}
+
 		}
 	},
 	computed: {//кэширование и  аргумент передать нельзя
@@ -335,7 +347,43 @@ ul {
 	border-radius: 20px;
 }
 
+@media (max-width: 850px) {
+	.img-background {
+		width: 850px;
+	}
+}
 
+@media (max-width: 590px) {
+	.img-background {
+		width: 590px;
+	}
+}
+
+@media (max-width: 850px) {
+	.footer {
+		width: 850px;
+	}
+}
+
+@media (max-width: 590px) {
+	.footer {
+		width: 590px;
+	}
+}
+
+@media (max-width: 850px) {
+	.img-func1 {
+		visibility: hidden;
+		;
+	}
+}
+
+@media (max-width: 850px) {
+	.img-func2 {
+		visibility: hidden;
+		;
+	}
+}
 
 .info-block2-1 {
 	position: relative;
@@ -419,3 +467,4 @@ ul {
 	padding-left: 30px;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

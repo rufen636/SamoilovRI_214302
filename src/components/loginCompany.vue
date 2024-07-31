@@ -14,51 +14,81 @@
 		<h1>Заполните вакансию</h1>
 		<div class="">
 			<p>Какую компанию представляете?</p>
-			<input class="btm" type="text" placeholder="Компания...">
+			<input v-model="name_company" class="btm" type="text" placeholder="Компания...">
+			<p>Должность соискателя?</p>
+			<input v-model="job_title" class="btm" type="text" placeholder="Должноссть...">
 			<p>Чем занимается компания?</p>
-			<textarea cols="32" wrap="hard" minlength="50" id="big-btn" class="btm " type="text"
+			<textarea v-model="activity" cols="32" wrap="hard" minlength="50" id="big-btn" class="btm " type="text"
 				placeholder="Деятельность..."></textarea>
-			<p>Какой желаемый опыт сотрудника?</p>
-			<textarea cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="text"
-				placeholder="Опыт..."></textarea>
+			<p>Какой желаемый опыт сотрудника?(в годах)</p>
+			<input v-model="experience" class="btm" type="text" placeholder="Опыт работы...">
 			<p>Какие навыки?</p>
-			<textarea cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="textarea"
+			<textarea v-model="skills" cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="textarea"
 				placeholder="Навыки..."></textarea>
 		</div>
 		<p></p>
-		<input class="btn" type="button" value="Отправить">
+		<input class="btn" type="button" value="Отправить" @click="company_save">
 
 	</div>
 	<img class="img" src="../assets/ABS-HR_Career-Path_Desktop_750x350.jpeg">
 	<div class="decorate-block"></div>
-	<div class="decorate-block" style="top: 500px;left:800px; height: 1000px;"></div>
+	<div class="decorate-block" style="top: 500px;left:800px; height: 700px;"></div>
 
 </template>
-
 <script>
-import headerMain from '../components/headerMain.vue'
-export default {
+import headerMain from '../components/headerMain.vue';
+import axios from 'axios';
 
+export default {
 	data() {
 		return {
+			name_company: '',
+			activity: '',
+			experience: '',
+			skills: '',
+			job_title: '',
+			login: ''
+		};
+	},
+	methods: {
+		async company_save() {
+			const { name_company, activity, experience, skills, job_title } = this;
+			try {
+				const login = localStorage.getItem('login');
+				if (!login) {
+					console.error('Ошибка: логин не найден в localStorage');
+					alert('Произошла ошибка: логин не найден');
+					return;
+				}
 
+				const data = { name_company, activity, experience, skills, login, job_title };
+
+				const response = await axios.post('/api/company', data);
+
+				if (response.status === 201) {
+					console.log('Form successfully created');
+					this.$router.push('/profilecompany');
+					alert('Данные успешно сохранены!');
+				} else {
+					console.error('Failed to create form');
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 400) {
+					alert('Вакансия уже существует');
+					this.$router.push('/profilecompany');
+				} else {
+					console.error('Ошибка при сохранении данных:', error);
+					alert('Произошла ошибка при сохранении данных');
+				}
+			}
 		}
-	},
-	methods: {// без кэширования
-
-	},
-	computed: {//кэширование и  аргумент передать нельзя
-
-	},
-	watch: {//следят за изменением свойств(называются как и св-ва за которыми буде следить)
-
-
 	},
 	components: {
 		headerMain
-	},
-}
+	}
+};
 </script>
+
 <style lang="scss" scoped>
 * {
 	font-family:
@@ -127,7 +157,7 @@ export default {
 
 .decorate-block {
 	width: 100px;
-	height: 1200px;
+	height: 1000px;
 	background-color: rgba(128, 128, 128, 0.561);
 	position: absolute;
 	left: 1100px;
@@ -135,3 +165,4 @@ export default {
 	z-index: -1;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

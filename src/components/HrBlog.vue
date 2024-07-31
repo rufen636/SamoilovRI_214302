@@ -2,67 +2,83 @@
 	<header-main />
 	<p style="height: 100px;"></p>
 	<div class="container">
-		<div class="block-left">
+		<div class="block" v-for="vacancy in vacancies" :key="vacancy.id">
 			<div class="text-area">
-				<h2>{{ vacancy[1] }}</h2>
-				<ul type="none" class="ul1">
-					<li style="left:0;" class="li1">{{ city[1] }}</li>
+				<h2 style="margin-left: 35px;">{{ vacancy.name_company }}</h2>
+				<h3 style="margin-left: 35px;">{{ vacancy.job_title }}</h3>
+				<ul type=" none" class="ul1">
+					<li class="li1">Требуемый опыт: {{ vacancy.experience }}</li>
 				</ul>
 				<p style="height: 20px;"></p>
 				<ul type="none" class="ul2">
-					<li class="li2" style="left:0;">{{ needs[1] }}</li>
-				</ul>
-				<button class="btn" @click="addNewNotes">Откликнуться </button>
-			</div>
-
-		</div>
-		<div class="block-right">
-			<div class="text-area">
-				<h2>{{ vacancy[2] }}</h2>
-				<ul type="none" class="ul1">
-					<li style="left:0;" class="li1">{{ city[2] }}</li>
+					<li class="li2">{{ vacancy.activity }}</li>
 				</ul>
 				<p style="height: 20px;"></p>
 				<ul type="none" class="ul2">
-					<li class="li2" style="left:0;">{{ needs[2] }}</li>
+					<li class="li2">Требуемые скилы: {{ vacancy.skills }}</li>
 				</ul>
-				<button class="btn" @click="addNewNotes">Откликнуться </button>
+				<button class="btn" @click="respondToVacancy(vacancy.id)">Откликнуться</button>
 			</div>
+			<p style="padding-top: 30px;"></p>
 		</div>
 	</div>
 </template>
 
 <script>
-import headerMain from '../components/headerMain.vue'
+import headerMain from '../components/headerMain.vue';
+import axios from 'axios';
+
 export default {
 	data() {
 		return {
-			vacancy: { 1: "Программист 1С", 2: "Frontend-разработчик" },
-			city: { 1: "Минск", 2: "Пинск" },
-			needs: {
-				1: "Опыт разработки и внедрения конфигураций на платформе 1C",
-				2: "Опыт работы с фронтенд-технологиями"
+			vacancies: [],
+		};
+	},
+	async mounted() {
+		try {
+			const response = await axios.get('http://localhost:3000/api/allCompanysData');
+			this.vacancies = response.data;
+		} catch (error) {
+			console.error('Ошибка при получении данных:', error);
+			alert('Произошла ошибка при получении данных');
+		}
+	},
+	methods: {
+		async respondToVacancy(companyId) {
+			try {
+				const applicantId = localStorage.getItem('applicant_id');
+				if (!applicantId) {
+					throw new Error('ID соискателя не найден в localStorage');
+				}
+
+				const response = await axios.post('http://localhost:3000/api/respond', {
+					applicant_id: applicantId,
+					company_id: companyId
+				});
+
+				if (response.status === 201) {
+					alert('Отклик успешно отправлен');
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 400) {
+					alert('Вы уже откликались на эту компанию');
+				} else {
+					console.error('Ошибка при отправке отклика:', error);
+					alert('Произошла ошибка при отправке отклика');
+				}
 			}
 		}
 	},
-	methods: {// без кэширования
-
-	},
-	computed: {//кэширование и  аргумент передать нельзя
-
-	},
-	watch: {//следят за изменением свойств(называются как и св-ва за которыми буде следить)
-
-
-	},
 	components: {
-		headerMain
+		headerMain,
 	},
-}
+};
 </script>
+
 <style lang="scss" scoped>
 .btn {
 	margin-top: 100px;
+	margin-left: 30px;
 	color: #2c3e50;
 	position: relative;
 	place-content: center;
@@ -183,3 +199,4 @@ export default {
 	position: absolute;
 }
 </style>
+./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue./headerMain.vue

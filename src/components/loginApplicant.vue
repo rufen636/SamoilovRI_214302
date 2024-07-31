@@ -1,5 +1,5 @@
 <template>
-	<header-login />
+	<header-main />
 	<div class="container">
 		<p style="color:#834C0B;">Присоединитесь </p>
 		<p></p>
@@ -14,39 +14,99 @@
 		<h1>Заполните анкету</h1>
 		<div class="">
 			<p>Имя</p>
-			<input class="btm" type="text" placeholder="Имя...">
+			<input v-model="first_name" class="btm" type="text" placeholder="Имя...">
 			<p>Отчество</p>
-			<input class="btm" type="text" placeholder="Отчество...">
+			<input v-model="surname" class="btm" type="text" placeholder="Отчество...">
 			<p>Фамилия</p>
-			<input class="btm" type="text" placeholder="Фамилия..">
+			<input v-model="second_name" class="btm" type="text" placeholder="Фамилия..">
 			<p>Опыт работы(в годах)</p>
-			<input class="btm" type="text" placeholder="Опыт работы...">
+			<input v-model="experience" class="btm" type="text" placeholder="Опыт работы...">
 			<p>Скиллы</p>
-			<textarea cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="text"
+			<textarea v-model="skills" cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="text"
 				placeholder="Скиллы..."></textarea>
 			<p>Сфера желаемой работы</p>
-			<textarea cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="textarea"
+			<textarea v-model="field_of_work" cols="32" wrap="hard" minlength="50" id="big-btn" class="btm" type="textarea"
 				placeholder="Сфера..."></textarea>
+			<p>Номер телефона</p>
+			<input v-model="number" class="btm" type="text" placeholder="Номер телефона...">
+
 		</div>
 		<p></p>
-		<input class="btn" type="button" value="Отправить">
+		<input class="btn" type="button" value="Отправить" @click="applicant_save">
 
 	</div>
 	<img class="img" src="../assets/ABS-HR_Career-Path_Desktop_750x350.jpeg">
 	<div class="decorate-block"></div>
-	<div class="decorate-block" style="top: 500px;left:800px; height: 1000px;"></div>
+	<div class="decorate-block" style="top: 500px;left:800px; height: 700px;"></div>
 </template>
 
 <script>
-import headerLogin from '../components/headerLogin.vue'
+import axios from 'axios';
+import HeaderMain from './headerMain.vue';
 export default {
 	data() {
 		return {
-
+			first_name: '',
+			second_name: '',
+			surname: '',
+			experience: '',
+			skills: '',
+			field_of_work: '',
+			number: '',
+			login: ''
 		}
 	},
-	methods: {// без кэширования
+	methods: {
+		async applicant_save() {
+			// Получаем значения полей из формы
+			const {
+				first_name,
+				second_name,
+				surname,
+				experience,
+				skills,
+				field_of_work,
+				number,
+			} = this;
+			try {
+				// Получаем логин из localStorage
+				const login = localStorage.getItem('login');
+				if (!login) {
+					console.error('Ошибка: логин не найден в localStorage');
+					alert('Произошла ошибка: логин не найден');
+					return;
+				}
 
+				const data = {
+					first_name,
+					second_name,
+					surname,
+					experience,
+					skills,
+					field_of_work,
+					number,
+					login // Передаем логин из localStorage
+				};
+
+				// Отправляем данные на сервер
+				const response = await axios.post('/api/applicant', data);
+
+				if (response.status === 201) {
+					console.log('Form successfully created');
+					this.$router.push('/profileapplicant');
+					alert('Данные успешно сохранены!');
+				} else {
+					console.error('Failed to create form');
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 400) {
+					this.$router.push('/profileapplicant');
+				} else {
+					console.error('Ошибка при сохранении данных:', error);
+					alert('Произошла ошибка при сохранении данных');
+				}
+			}
+		}
 	},
 	computed: {//кэширование и  аргумент передать нельзя
 
@@ -56,10 +116,11 @@ export default {
 
 	},
 	components: {
-		headerLogin
+		HeaderMain
 	},
 }
 </script>
+
 <style lang="scss" scoped>
 * {
 
@@ -134,3 +195,4 @@ export default {
 	z-index: -1;
 }
 </style>
+./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue./headerLogin.vue
