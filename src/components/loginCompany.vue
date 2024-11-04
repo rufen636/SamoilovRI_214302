@@ -63,7 +63,7 @@ export default {
 
 				const data = { name_company, activity, experience, skills, login, job_title };
 
-				const response = await axios.post('/api/company', data);
+				const response = await axios.post('http://localhost:8000/api/company', data);
 
 				if (response.status === 201) {
 					console.log('Form successfully created');

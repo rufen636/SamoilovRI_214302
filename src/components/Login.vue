@@ -28,8 +28,8 @@ export default {
 		async onLogin() {
 			const { login, password } = this;
 			try {
-				const response = await axios.post('http://localhost:3000/api/login', { login, password });
-
+				const response = await axios.post('http://localhost:8000/api/login', { login, password });
+        
 				if (response.status === 200) {
 					const role = response.data.role;
 					this.$store.commit('setIsAuthenticated', true);

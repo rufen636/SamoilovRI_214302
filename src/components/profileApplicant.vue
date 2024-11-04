@@ -79,7 +79,7 @@ export default {
 				throw new Error('Логин не найден в localStorage');
 			}
 
-			const response = await axios.post(`http://localhost:3000/api/applicantTake`, { login });
+			const response = await axios.post(`http://localhost:8000/api/applicantTake`, { login });
 			const applicantData = response.data;
 
 			this.first_name = applicantData.first_name;
@@ -102,7 +102,7 @@ export default {
 				if (!login) {
 					throw new Error('Логин не найден в localStorage');
 				}
-				const response = await axios.post('http://localhost:3000/api/deleteappl', { login });
+				const response = await axios.post('http://localhost:8000/api/deleteappl', { login });
 				if (response.status === 200) {
 					this.first_name = '';
 					this.second_name = '';

@@ -62,11 +62,11 @@ export default {
 
 			try {
 				const selectedRoles = Object.keys(this.selectedRoles).filter(role => this.selectedRoles[role]);
-				const response = await axios.post('http://localhost:3000/api/register', {
-					login: this.login,
-					password: this.password,
-					roles: selectedRoles
-				});
+				const response = await axios.post('http://localhost:8000/api/register', {
+    login: this.login,
+    password: this.password,
+    roles: selectedRoles
+});
 
 				if (response.status === 201) {
 					console.log('User successfully created');

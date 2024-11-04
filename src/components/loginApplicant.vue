@@ -89,7 +89,7 @@ export default {
 				};
 
 				// Отправляем данные на сервер
-				const response = await axios.post('/api/applicant', data);
+				const response = await axios.post('http://localhost:8000/api/applicant', data);
 
 				if (response.status === 201) {
 					console.log('Form successfully created');
