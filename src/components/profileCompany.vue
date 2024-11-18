@@ -1,63 +1,71 @@
 <template>
-	<header-main />
-	<p style="height: 100px;"></p>
-	<div v-if="isProfileComplete" class="container">
-			<div class="block-left">
-					<div class="text-area1">
-							<h1>Профиль компании</h1>
-							<ul type="none" class="ul1">
-									<li style="left:0;" class="li1">Компания:</li>
-									<li style="right: 0;" class="li1">{{ company.name_company }}</li>
-							</ul>
-							<p style="height: 20px;"></p>
-							<div v-if="responses.length > 0">
-									<ul type="none" class="ul2">
-											<li style="left:0;" class="li1">
-													Имя и номер телефона кандидата,
-													который откликнулся:
-													<ul v-for="response in responses" :key="response.id">
-															<li>{{ response.first_name }}</li>
-															<li>{{ response.number }}</li>
-													</ul>
-											</li>
-									</ul>
-							</div>
-							<div v-else>Откликов нет</div>
-					</div>
-			</div>
-			<div class="divider"></div>
-			<div class="block-right">
-					<div class="text-area1">
-							<h1>Активные вакансии</h1>
-							<div class="container">
-									<div class="block-left">
-											<div class="text-area">
-													<div v-for="vacancy in vacancies" :key="vacancy.id">
-															<h2>{{ vacancy.job_title }}</h2>
-															<ul type="none" class="ul1">
-																	<li style="left:7px;" class="li1">Опыт: {{ vacancy.experience }} (лет)</li>
-															</ul>
-															<p style="height: 20px;"></p>
-															<ul type="none" class="ul2">
-																	<li class="li2" style="left:7px;">{{ vacancy.activity }}</li>
-															</ul>
-															<p style="height: 20px;"></p>
-															<ul type="none" class="ul2">
-																	<li class="li2" style="left:7px;">{{ vacancy.skills }}</li>
-															</ul>
-															<button class="btn" @click="deleteData(vacancy.id)">Удалить</button>
-													</div>
-													<p></p>
-											</div>
-									</div>
-							</div>
-					</div>
-			</div>
-	</div>
-	<div v-else>
-			<h1>Профиль не заполнен</h1>
-			Перейдите на главную и нажмите на 'Присоединиться'
-	</div>
+  <header-main />
+  <p style="height: 100px;"></p>
+  
+  <div v-if="isProfileComplete" class="container">
+    <!-- Блок с данными компании -->
+    <div class="block-left">
+      <div class="text-area1">
+        <h1>Профиль компании</h1>
+        <ul type="none" class="ul1">
+          <li style="left:0;" class="li1">Компания:</li>
+          <li style="right: 0;" class="li1">{{ company.name_company }}</li>
+        </ul>
+        <p style="height: 20px;"></p>
+
+        <!-- Вывод откликов -->
+        <div v-if="responses.length > 0">
+          <ul type="none" class="ul2">
+            <li style="left:0;" class="li1">
+              Имя и номер телефона кандидата, который откликнулся:
+              <ul v-for="response in responses" :key="response.id">
+                <li>{{ response.firstName }} {{ response.lastName }}</li>
+                <li>{{ response.number }}</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div v-else>Откликов нет</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Блок с активными вакансиями -->
+    <div class="block-right">
+      <div class="text-area1">
+        <h1>Активные вакансии</h1>
+        <div class="container">
+          <div class="block-left">
+            <div class="text-area">
+              <div v-for="vacancy in vacancies" :key="vacancy.id">
+                <h2>{{ vacancy.jobTitle }}</h2>
+                <ul type="none" class="ul1">
+                  <li style="left:7px;" class="li1">Опыт: {{ vacancy.experience }} (лет)</li>
+                </ul>
+                <p style="height: 20px;"></p>
+                <ul type="none" class="ul2">
+                  <li class="li2" style="left:7px;">{{ vacancy.activity }}</li>
+                </ul>
+                <p style="height: 20px;"></p>
+                <ul type="none" class="ul2">
+                  <li class="li2" style="left:7px;">{{ vacancy.skills }}</li>
+                </ul>
+                <button class="btn" @click="deleteData(vacancy.id)">Удалить</button>
+              </div>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Когда профиль не заполнен -->
+  <div v-else>
+    <h1>Профиль не заполнен</h1>
+    Перейдите на главную и нажмите на 'Присоединиться'
+  </div>
 </template>
 
 <script>
@@ -65,85 +73,102 @@ import headerMain from '../components/headerMain.vue';
 import axios from 'axios';
 
 export default {
-	name: 'userCard',
-	data() {
-			return {
-					company: {},
-					vacancies: [],
-					responses: [], // Инициализация массива откликов
-					login: localStorage.getItem('login') || '' // Получаем логин из localStorage
-			}
-	},
-	computed: {
-			isProfileComplete() {
-					// Проверяем, заполнен ли профиль
-					return this.company.name_company && this.company.activity && this.company.experience && this.company.skills;
-			}
-	},
-	async mounted() {
-			try {
-					const login = this.login;
-					if (!login) {
-							throw new Error('Логин не найден в localStorage');
-					}
-
-					console.log('Логин перед отправкой:', login);
-
-					// Отправляем запрос на сервер
-					const response = await axios.post(`http://localhost:8000/api/companyTake?login=${encodeURIComponent(login)}`);
-
-					console.log('Отправленный запрос:', { login });
-					console.log('Полученные данные:', response.data); // Логирование для проверки данных
-
-					// Проверка структуры данных
-					if (response.data) {
-							this.company = response.data.company || {}; // Изменяем на response.data.company
-							this.vacancies = response.data.vacancies || []; // Изменяем здесь
-							this.responses = response.data.responses || []; // Инициализируем отклики, если они есть
-							console.log('Данные компании:', this.company);
-							console.log('Вакансии:', this.vacancies); // Логирование вакансий для проверки
-					} else {
-							console.error('Данные компании отсутствуют или имеют неверный формат.');
-					}
-			} catch (error) {
-					// Обработка ошибок
-					console.error('Ошибка при получении данных:', error.response ? error.response.data : error.message);
-					alert('Произошла ошибка при получении данных: ' + (error.response ? error.response.data : error.message));
-			}
-	},
-	methods: {
-		async deleteData() {
+  name: 'userCard',
+  data() {
+    return {
+      company: {},
+      vacancies: [], // Здесь будут вакансии
+      responses: [], // Здесь будут отклики
+      login: localStorage.getItem('login') || '' // Получаем логин из localStorage
+    }
+  },
+  computed: {
+    isProfileComplete() {
+      // Проверяем, заполнен ли профиль
+      return (
+        this.company.name_company &&
+        this.company.activity &&
+        this.company.experience &&
+        this.company.skills
+      );
+    }
+  },
+  async mounted() {
     try {
+      const login = this.login;
+      if (!login) {
+        throw new Error('Логин не найден в localStorage');
+      }
+
+      console.log('Логин перед отправкой:', login);
+
+      // Отправляем запрос на сервер с объектом
+      const response = await axios.post('http://localhost:8000/api/companyTake', { login });
+
+      console.log('Полученные данные:', response.data); // Логирование для проверки данных
+
+      // Проверка структуры данных
+      if (response.data) {
+        // Изменяем структуру данных
+        this.company = {
+          name_company: response.data.company.name_company || '', // Привязываем поля из ответа
+          activity: response.data.company.activity || '',
+          experience: response.data.company.experience || '',
+          skills: response.data.company.skills || ''
+        };
+
+        // Вакансии и отклики
+        this.vacancies = response.data.vacancies || [];
+        this.responses = response.data.responses || [];
+
+        console.log('Данные компании:', this.company);
+        console.log('Вакансии:', this.vacancies); // Логирование вакансий для проверки
+        console.log('Отклики:', this.responses); // Логирование откликов для проверки
+      } else {
+        console.error('Данные компании отсутствуют или имеют неверный формат.');
+      }
+    } catch (error) {
+      // Обработка ошибок
+      console.error('Ошибка при получении данных:', error.response ? error.response.data : error.message);
+      alert('Произошла ошибка при получении данных: ' + (error.response ? error.response.data : error.message));
+    }
+  },
+  methods: {
+    async deleteData(id) {
+      try {
         const login = this.login;
-        const vacancyId = this.company.id; // Предположим, что id компании это id вакансии
-        if (!login || !vacancyId) {
-            throw new Error('Логин или ID вакансии не могут быть null');
+        if (!login || !id) {
+          throw new Error('Логин или ID вакансии не могут быть null');
         }
 
         console.log('Login:', login); // Логирование для проверки
-        console.log('Deleting vacancy with ID:', vacancyId); // Логирование удаления
+        console.log('Deleting vacancy with ID:', typeof(vacancyId)); // Логирование удаления
+				const response1 = await axios.post('http://localhost:8000/api/companyTake', { login });
+				console.log('Полученные данные:', response1.data.vacancies[id-1].id);
+				id = response1.data.vacancies[id-1].id;
+        const response = await axios.post('http://localhost:8000/api/deletecomp', { id }).then(response => console.log(response.data))
+				.catch(error => console.error(error));
 
-        const response = await axios.post('http://localhost:8000/api/deletecomp', { login, vacancyId });
+				console.log(id);
 
         if (response.status === 200) {
-            this.vacancies = this.vacancies.filter(vacancy => vacancy.id !== vacancyId);
-            alert('Вакансия успешно удалена');
+          this.vacancies = this.vacancies.filter((vacancy) => vacancy.id !== id);
+          alert('Вакансия успешно удалена');
         } else {
-            alert('Ошибка при удалении вакансии');
+          alert('Ошибка при удалении вакансии');
         }
-    } catch (error) {
+      } catch (error) {
         console.error('Ошибка при удалении вакансии:', error.response ? error.response.data : error.message);
         alert('Ошибка при удалении вакансии: ' + (error.response ? error.response.data : error.message));
+      }
     }
-
-}
-
-	},
-	components: {
-			headerMain
-	},
+  },
+  components: {
+    headerMain
+  }
 }
 </script>
+
 <style lang="scss" scoped>
 .btn {
 	margin-top: 100px;

@@ -36,7 +36,7 @@ export default {
 	},
 	async mounted() {
 		try {
-			const response = await axios.get('http://localhost:3000/api/allCompanysData');
+			const response = await axios.get('http://localhost:8000/api/allCompanysData');
 			this.vacancies = response.data;
 		} catch (error) {
 			console.error('Ошибка при получении данных:', error);

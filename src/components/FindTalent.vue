@@ -61,7 +61,7 @@ export default {
 		async findCandidates() {
 			if (this.showResults) {
 				try {
-					const response = await axios.post('http://localhost:3000/api/findCandidates', {
+					const response = await axios.post('http://localhost:8000/api/findCandidates', {
 						query: this.inputValue,
 						experienceFilters: this.experienceFilters
 					});

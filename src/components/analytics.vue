@@ -44,7 +44,7 @@ export default {
 	methods: {
 		async fetchData() {
 			try {
-				const response = await axios.get('http://localhost:3000/api/experienceAnalytics');
+				const response = await axios.get('http://localhost:8000/api/experienceAnalytics');
 				this.data = response.data;
 				console.log(this.data);
 				this.renderChart();

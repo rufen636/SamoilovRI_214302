@@ -95,7 +95,7 @@ export default {
 	place-content: center;
 	place-items: center;
 	width: fit-content;
-	border-radius: 99px;
+	border-radius: 10px;
 	letter-spacing: 0.05em;
 	border: 1px solid #2c3e50;
 	text-decoration: none;
